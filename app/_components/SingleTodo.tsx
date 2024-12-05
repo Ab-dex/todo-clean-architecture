@@ -2,8 +2,8 @@ import React, { SetStateAction } from "react";
 import CheckBox from "./CheckBox";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
-import { TodoType } from "../page";
 import { cn } from "@/src/utils/cn";
+import { TodoType } from "../Todos";
 
 type Props = {
   setTextValue: React.Dispatch<SetStateAction<string>>;

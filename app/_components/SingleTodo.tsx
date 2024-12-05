@@ -14,7 +14,6 @@ type Props = {
   isCompleted: boolean;
   deleteTodo: (id: number) => void;
   handleIsTodoCompleted: (todo: TodoType) => void;
-  //
   textValue: string;
   saveEditTodo: () => void;
   editTodo: (id: number) => void;

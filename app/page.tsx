@@ -1,9 +1,10 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import Todos from "./Todos";
 import bgDesktopDark from "@/assets/images/bg-desktop-dark.jpg";
 import bgMobiledark from "@/assets/images/bg-mobile-dark.jpg";
 import AnimateBackgroundImage from "./_components/BackroundImage";
 import Image from "next/image";
+import UserMenu from "./_components/UserMenu";
 
 export default function Home() {
   // drag and drop
@@ -62,8 +63,14 @@ export default function Home() {
         maxWidth={"32rem"}
         marginInline={"auto"}
         alignItems="center"
-        sx={{paddingTop: ["5rem", "8rem"]}}
+        sx={{paddingTop: ["3rem", "3rem"]}}
       >
+
+        <Stack direction="row" width={"100%"} justifyContent="space-between" alignItems="center">
+        <Typography variant="h5">Todo List</Typography>
+        <UserMenu/>
+
+        </Stack>
         
         <Todos/>
         {/* drag and drop  */}

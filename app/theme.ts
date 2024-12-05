@@ -8,9 +8,19 @@ const roboto = Roboto({
   display: 'swap',
 });
 
+const palette = {
+    text:{
+      primary: "#FFFFFF"
+    }
+}
+
 const theme = createTheme({
+
   typography: {
     fontFamily: roboto.style.fontFamily,
+    allVariants: {
+      color: "white"
+    }
   },
 });
 

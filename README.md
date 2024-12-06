@@ -41,3 +41,7 @@ To setup a file system storage that integrates with the appication, follow the s
 1. create "sqlite.db"  at the root of the project
 2. Run the command: `npx drizzle-kit generate` (This is required if the already generated migration is deleted. Ensure to remove target: "es5" from tsconfig as it does not run well with drizzle)
 3. Run `npx drizzle-kit migrate` to migrate the generated table to sqlite.db file.
+
+## Onion Architecture Setup
+Please you'll have to forgive me, I am short of time and can't start configuring the containers and injections manually so I'd rather use a library that will help provide decorators for me.
+Also, in this implementation, due to using a local sqlite.db file with better-sqlite3, I can only call db related logic in client components. Hence the use of route handlers here for basic setup. I have created an alternative method in a separate branch but it uses db from a docker container and a libsql library instead. There, I am able to use server actions coonveniently.

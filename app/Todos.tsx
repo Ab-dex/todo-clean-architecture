@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Stack } from "@mui/material";
 import InputBox from "./_components/InputBox";
 import SingleTodo from "./_components/SingleTodo";
 import { cn } from "@/src/utils/cn";
+import { getTodosController } from "@/src/interface-adapters/controllers/todos.controller";
 
 export type TodoType = {
   id: number;
@@ -20,7 +21,7 @@ const sampleTodos: TodoType[] = [
 ];
 
 export default function Todos() {
-  const [todos, setTodos] = useState(sampleTodos);
+  const [todos, setTodos] = useState<TodoType[]>([]);
   const [inputText, setInputText] = useState("");
   const [isTodoCompleted, setTodoCompleted] = useState(false);
   const [editModeId, setEditModeId] = useState<number | null>(null);
@@ -89,6 +90,17 @@ export default function Todos() {
 
   const completedTodos = todos.filter((d) => d.isCompleted);
   const activeTodos = todos.filter((d) => !d.isCompleted);
+
+  const getTodo = async () => {
+    const data  = await (await fetch("/api/todos")).json()
+    console.log(data)
+  }
+
+  useEffect(() => {
+    getTodo()
+  }, [])
+
+
 
   return (
     <Stack direction="column" useFlexGap spacing={{ xs: 2, sm: 4 }} width={"100%"}>

@@ -1,5 +1,7 @@
+import { inject, injectable } from 'inversify'
 import { Todo } from "@/src/domain/models/todos";
-import { ITodosRepository } from "@/src/domain/repositories/todo.repositories";
+import { ITodosRepository } from "@/src/domain/repositories/todos-repository.interface";
+import { DI_SYMBOLS } from '@/di/types';
 
 // Define the interface for the use case
 export interface ITodosUseCase {
@@ -7,9 +9,10 @@ export interface ITodosUseCase {
 }
 
 // Implement the use case
-export class TodoUseCase implements ITodosUseCase {
+// @injectable()
+export class TodosUseCase implements ITodosUseCase {
   
-    constructor(private todoRepository: ITodosRepository) {}
+    constructor(@inject(DI_SYMBOLS.ITodosRepository) private todoRepository: ITodosRepository) {}
 
     // Implement the async method to fetch todos from the repository
     async getTodos(): Promise<Todo[]> {

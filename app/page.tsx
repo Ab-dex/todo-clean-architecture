@@ -7,6 +7,7 @@ import Image from "next/image";
 import UserMenu from "./_components/UserMenu";
 
 export default function Home() {
+  
   // drag and drop
 
   // const { getRootProps, getInputProps } = useDropzone({

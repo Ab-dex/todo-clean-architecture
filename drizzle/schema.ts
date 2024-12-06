@@ -15,7 +15,7 @@ export const sessions = sqliteTable('session', {
 });
 
 export const todos = sqliteTable('todos', {
-  id: integer('id').primaryKey(),
+  id: text('id').primaryKey(),
   todo: text('todo').notNull(),
   completed: integer('completed', { mode: 'boolean' }).notNull().default(false),
   userId: text('user_id')

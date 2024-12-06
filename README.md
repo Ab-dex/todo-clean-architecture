@@ -34,3 +34,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Db Setup
+To setup a file system storage that integrates with the appication, follow the steps:
+
+1. create "sqlite.db"  at the root of the project
+2. Run the command: `npx drizzle-kit generate` (This is required if the already generated migration is deleted. Ensure to remove target: "es5" from tsconfig as it does not run well with drizzle)
+3. Run `npx drizzle-kit migrate` to migrate the generated table to sqlite.db file.

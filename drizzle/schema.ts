@@ -21,4 +21,5 @@ export const todos = sqliteTable('todos', {
   userId: text('user_id')
     .notNull()
     .references(() => users.id),
+  dueDate: text('due_date'),
 });

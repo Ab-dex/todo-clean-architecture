@@ -6,9 +6,8 @@ import { Box, Stack } from "@mui/material";
 import InputBox from "./_components/InputBox";
 import SingleTodo from "./_components/SingleTodo";
 import { cn } from "@/src/utils/cn";
-import { getTodosController } from "@/src/interface-adapters/controllers/todos.controller";
 import { Todo } from "@/src/domain/models/todos";
-import { getTodos } from "./actions";
+import { getTodos } from "./_actions/todoAction";
 
 export type TodoType = {
   id: number;

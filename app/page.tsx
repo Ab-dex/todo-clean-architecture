@@ -5,9 +5,6 @@ import bgMobiledark from "@/assets/images/bg-mobile-dark.jpg";
 import AnimateBackgroundImage from "./_components/BackroundImage";
 import Image from "next/image";
 import UserMenu from "./_components/UserMenu";
-import { getInjection } from "@/di/container";
-import { Todo } from "@/src/domain/models/todos";
-import { getTodos } from "./actions";
 
 
 export default async function Home() {

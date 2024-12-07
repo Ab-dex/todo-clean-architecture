@@ -3,17 +3,18 @@ import { injectable } from 'inversify'
 
 import { db, Transaction } from '@/drizzle';
 import { ITodosRepository } from '@/src/domain/repositories/todos-repository.interface';
-import { Todo } from '@/src/domain/models/todos';
+import { ITodo, Todo } from '@/src/domain/models/todos';
 
 @injectable()
 export class TodosRepository implements ITodosRepository {
   constructor() {}
   
-  async getTodos(): Promise<Todo[]> {
-    return []
+  async getTodos(): Promise<ITodo[]> {
+    const query = db.query.todos.findMany();
+    return query
   }
 
-  async createTodo(todo: Todo, tx?: Transaction): Promise<Todo> {
+  async createTodo(todo: Todo, tx?: Transaction): Promise<ITodo> {
     const invoker = tx ?? db;
     return todo;
     

@@ -7,6 +7,8 @@ import InputBox from "./_components/InputBox";
 import SingleTodo from "./_components/SingleTodo";
 import { cn } from "@/src/utils/cn";
 import { getTodosController } from "@/src/interface-adapters/controllers/todos.controller";
+import { Todo } from "@/src/domain/models/todos";
+import { getTodos } from "./actions";
 
 export type TodoType = {
   id: number;
@@ -91,13 +93,18 @@ export default function Todos() {
   const completedTodos = todos.filter((d) => d.isCompleted);
   const activeTodos = todos.filter((d) => !d.isCompleted);
 
-  const getTodo = async () => {
-    const data  = await (await fetch("/api/todos")).json()
-    console.log(data)
+  const fetchTodo = async () => {
+    let todos: Todo[];
+    try {
+      todos = await getTodos();
+      console.log(todos)
+    } catch (err) {
+      throw err;
+    }
   }
 
   useEffect(() => {
-    getTodo()
+    fetchTodo()
   }, [])
 
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Snackbar, SnackbarCloseReason, SnackbarOrigin, Stack, Typography } from "@mui/material";
 import InputBox from "./_components/InputBox";
 import SingleTodo from "./_components/SingleTodo";
 import { cn } from "@/src/utils/cn";
@@ -17,6 +17,12 @@ import {
 import { useAppContext } from "./_contexts/AppContext";
 import { ModalType, Types } from "./_contexts/context.types";
 
+interface SnackbarState extends SnackbarOrigin {
+  open: boolean;
+  message: string;
+}
+
+
 export default function Todos() {
   const { dispatch } = useAppContext();
   const [todos, setTodos] = useState<ITodo[]>([]);
@@ -26,6 +32,26 @@ export default function Todos() {
     "all"
   );
   const [animationParent] = useAutoAnimate();
+  const [isOpen, setIsOpen] = useState(false)
+  const [message, setMessage] = useState('')
+
+  const openSnackbar = (message: string ) => {
+    setMessage(message)
+    setIsOpen(true)
+  };
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setIsOpen(false);
+  };
+
+
 
   // Fetch todos from the server
   const fetchTodos = useCallback(async () => {
@@ -37,7 +63,7 @@ export default function Todos() {
         )
       );
     } catch (err) {
-      alert("Failed to fetch todos. Please try again.");
+      openSnackbar("Failed to fetch todos. Please try again.");
     }
   }, []);
 
@@ -46,13 +72,18 @@ export default function Todos() {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (inputText.trim() === "") {
-        alert("Todo cannot be empty.");
+        openSnackbar("Todo cannot be empty.");
+        return;
+      }
+
+      if (inputText.trim()?.length < 4) {
+        openSnackbar("Todo must be more at least 4 characters long");
         return;
       }
 
       const isExistingTodo = todos.some((todo) => todo.todo === inputText);
       if (isExistingTodo) {
-        alert("This todo already exists.");
+        openSnackbar("This todo already exists.");
         setInputText("");
         return;
       }
@@ -63,7 +94,7 @@ export default function Todos() {
         setInputText("");
         setTodoCompleted(false);
       } catch (err) {
-        alert("Failed to create todo. Please try again.");
+        openSnackbar("Failed to create todo. Please try again.");
       }
     },
     [inputText, isTodoCompleted, todos, fetchTodos]
@@ -76,7 +107,7 @@ export default function Todos() {
         await updateTodo(todo.id, { completed: !todo.completed });
         fetchTodos(); // Refresh todos
       } catch (err) {
-        alert("Failed to update todo. Please try again.");
+        openSnackbar("Failed to update todo. Please try again.");
       }
     },
     [fetchTodos]
@@ -89,7 +120,7 @@ export default function Todos() {
         await removeTodo(id);
         fetchTodos(); // Refresh todos
       } catch (err) {
-        alert("Failed to delete todo. Please try again.");
+        openSnackbar("Failed to delete todo. Please try again.");
       }
     },
     [fetchTodos]
@@ -97,13 +128,14 @@ export default function Todos() {
 
   // Clear all completed todos
   const clearCompletedTodos = useCallback(async () => {
+
     const completedIds = todos.filter((todo) => todo.completed).map((todo) => todo.id);
     if (completedIds.length > 0) {
       try {
         await removeMultipleTodos(completedIds);
         fetchTodos(); // Refresh todos
       } catch (err) {
-        alert("Failed to clear completed todos. Please try again.");
+        openSnackbar(err as string);
       }
     }
   }, [todos, fetchTodos]);
@@ -252,6 +284,13 @@ export default function Todos() {
           <Button onClick={clearCompletedTodos} variant="contained" size="small" sx={{ textTransform: "none" }}>Clear Completed</Button>
         </div>
       </Box>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal : 'right'}}
+        open={isOpen}
+        onClose={handleClose}
+        autoHideDuration={2000}
+        message={message}
+      />
     </Stack>
   );
 }

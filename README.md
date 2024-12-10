@@ -50,20 +50,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - An interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 ## Db Setup
 
@@ -92,3 +78,9 @@ For the Docker setup, use the following steps:
 2. If you plan to bind volumes, avoid doing it directly in `/app`. Instead, use `/src` to prevent overriding your build files in `/app`, which could prevent the final Docker command from running properly.
 
 Note: An alternative method is available in a separate branch, where Docker is used with a different database setup (Dockerized db with `libsql`). This allows the use of server actions, which works more smoothly in server-side operations.
+
+### Database File Permissions
+
+In this project, I had to change the permissions and ownership of both the `sqlite.db` file and the containing `/app` directory in order to allow the application to have write access to the database file. This was necessary to avoid permission issues when interacting with the SQLite database within the Docker container.
+
+To ensure proper access, the `sqlite.db` file is set to be owned by the `nextjs` user and the `nodejs` group. Additionally, the directory containing the database was given appropriate read, write, and execute permissions for the user and group.

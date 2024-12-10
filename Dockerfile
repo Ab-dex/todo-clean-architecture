@@ -1,5 +1,3 @@
-# syntax=docker.io/docker/dockerfile:1
-
 FROM node:18-slim AS base
 
 # Install dependencies only when needed
@@ -24,6 +22,12 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+RUN rm -f /app/sqlite.db \
+  && touch /app/sqlite.db \
+  && npx drizzle-kit generate \
+  && npx drizzle-kit migrate
+
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -54,7 +58,11 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/sqlite.db ./
+COPY --from=builder --chown=nextjs:nodejs /app/sqlite.db ./sqlite.db
+
+RUN chown -R nextjs:nodejs /app && \
+    chmod -R 775 /app && \
+    chmod 660 ./sqlite.db
 
 USER nextjs
 
@@ -66,3 +74,4 @@ ENV PORT=3000
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
+# CMD ["sh", "-c", "ls -l /"]

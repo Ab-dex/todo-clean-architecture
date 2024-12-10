@@ -28,7 +28,7 @@ export default function InputBox({
 
   return (
     <form onSubmit={onSubmit}>
-        <Stack alignItems="center" useFlexGap padding={2} spacing={2} bgcolor="#ffffff" borderRadius="6px">
+        <Stack alignItems="center" useFlexGap padding={2} spacing={2} bgcolor="#ffffff" borderRadius="6px" className="shadow-lg">
             <Stack alignItems="center" useFlexGap direction="row" width="100%" position="relative" borderRadius="8px" border={1} borderColor={"#1e293b"} overflow="hidden" boxShadow={1}>
                 <Button
                     disabled={isCheckBoxDisabled}
@@ -41,11 +41,12 @@ export default function InputBox({
                         "border-gray-200  dark:border-gray-700 cursor-not-allowed":
                         isCheckBoxDisabled
                     })}
-                    isCompleted={isTodoCompleted}
+                    completed={isTodoCompleted}
                     />
                 </Button>
                 <input
                     value={value}
+                    maxLength={70}
                     onChange={onChange}
                     className="focus:border-none focus:outline-none pr-3 shadow-sm w-full h-[3rem] bg-transparent"
                     type="text"

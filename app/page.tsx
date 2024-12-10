@@ -30,7 +30,7 @@ export default async function Home() {
         spacing={{ xs: 2, sm: 3 }}
         direction="column"
         useFlexGap
-        maxWidth={"32rem"}
+        maxWidth={"44rem"}
         marginInline={"auto"}
         alignItems="center"
         sx={{paddingTop: ["3rem", "3rem"]}}

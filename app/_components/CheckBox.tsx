@@ -5,22 +5,22 @@ import { FaCheck } from "react-icons/fa6";
 
 type CheckBoxProps = {
   className?: string;
-  isCompleted?: boolean;
+  completed?: boolean;
 };
 
-export default function CheckBox({ className, isCompleted }: CheckBoxProps) {
+export default function CheckBox({ className, completed }: CheckBoxProps) {
   return (
     <Box
       className={cn(
         "h-5 w-5 cursor-pointer min-h-5 min-w-5 border rounded-full flex items-center justify-center text-white text-center",
         {
           "bg-gradient-to-t  from-[hsl(280,87%,65%)] to-[hsl(192,100%,67%)]":
-            isCompleted
+            completed
         },
         className
       )}
     >
-      {isCompleted && <FaCheck className="text-sm" />}
+      {completed && <FaCheck className="text-sm" />}
     </Box>
   );
 }

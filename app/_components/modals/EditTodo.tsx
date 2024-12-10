@@ -11,19 +11,21 @@ import {
 import { ITodo } from "@/src/domain/models/todos";
 import { useAppContext } from "../../_contexts/AppContext";
 import { Types } from "../../_contexts/context.types";
+import { updateTodo } from "@/app/_actions/todoAction";
 
 const EditTodoModal = () => {
   const { state, dispatch } = useAppContext();
-  const [todo, setTodo] = useState<ITodo | null>(state.modalData || null);
-
-  const handleSave = () => {
-    // Dispatch an action to update the todo list or handle save logic
-    console.log("Updated Todo:", todo);
-    dispatch({ type: Types.HIDE_MODAL });
-  };
+  const [todo, setTodo] = useState<ITodo>(state.modalData!);
+  const [date, setDate] = useState<string | undefined>(todo?.dueDate as string | undefined)
 
   const handleClose = () => {
     dispatch({ type: Types.HIDE_MODAL });
+  };
+
+  const handleSave = async() => {
+    const {id, ...rest} = todo
+    await updateTodo(id, {...rest, dueDate: date})
+    handleClose()
   };
 
   if (!state.modalType || state.modalType !== "EDIT_TODO") return null;
@@ -51,7 +53,7 @@ const EditTodoModal = () => {
           fullWidth
           value={todo?.todo || ""}
           onChange={(e) =>
-            setTodo((prev) => ({ ...prev, content: e.target.value } as ITodo))
+            setTodo((prev) => ({ ...prev, todo: e.target.value } as ITodo))
           }
           margin="normal"
           sx={{
@@ -67,7 +69,7 @@ const EditTodoModal = () => {
               onChange={(e) =>
                 setTodo((prev) => ({
                   ...prev,
-                  isCompleted: e.target.checked,
+                  completed: e.target.checked,
                 } as ITodo))
               }
             />
@@ -85,13 +87,16 @@ const EditTodoModal = () => {
           fullWidth
           InputLabelProps={{ shrink: true }}
           value={
-            todo?.dueDate ? new Date(todo.dueDate).toISOString().split("T")[0] : ""
+            date ? date.split("T")[0] : ""
           }
           onChange={(e) =>
-            setTodo((prev) => ({
-              ...prev,
-              dueDate: e.target.value ? new Date(e.target.value) : null,
-            } as ITodo))
+            setDate(
+              e.target.value
+                ? new Date(
+                    new Date(e.target.value).setUTCHours(11, 59, 0, 0)
+                  ).toISOString()
+                : ""
+            )
           }
           margin="normal"
           sx={{
@@ -101,11 +106,13 @@ const EditTodoModal = () => {
           }}
         />
         <Box mt={2} display="flex" justifyContent="space-between">
-          <Button variant="contained" onClick={handleSave}>
-            Save
-          </Button>
+          
           <Button variant="outlined" onClick={handleClose}>
             Cancel
+          </Button>
+
+          <Button variant="contained" onClick={handleSave}>
+            Save
           </Button>
         </Box>
       </Box>

@@ -15,16 +15,17 @@ import { updateTodo } from "@/app/_actions/todoAction";
 
 const EditTodoModal = () => {
   const { state, dispatch } = useAppContext();
-  const [todo, setTodo] = useState<ITodo>(state.modalData!);
+  const [todo, setTodo] = useState<ITodo>(state.modalData?.todo!);
   const [date, setDate] = useState<string | undefined>(todo?.dueDate as string | undefined)
 
   const handleClose = () => {
     dispatch({ type: Types.HIDE_MODAL });
   };
 
-  const handleSave = async() => {
-    const {id, ...rest} = todo
-    await updateTodo(id, {...rest, dueDate: date})
+  const handleSave = () => {
+    if(state.modalData?.updateTodo){
+      state.modalData?.updateTodo({...todo, dueDate: date})
+    }
     handleClose()
   };
 

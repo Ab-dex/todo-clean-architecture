@@ -108,6 +108,12 @@ export default function Todos() {
     }
   }, [todos, fetchTodos]);
 
+
+  const handleSave = async (todo: ITodo) => {
+    const {id, dueDate, ...rest} = todo
+    await updateTodo(id, {...rest, dueDate: dueDate ?? undefined})
+    fetchTodos()
+  };
   // Show edit modal
   const editTodo = useCallback(
     (id: string) => {
@@ -115,12 +121,14 @@ export default function Todos() {
       if (todoToEdit) {
         dispatch({
           type: Types.SHOW_MODAL,
-          payload: { modalType: ModalType.EDIT_TODO, modalData: todoToEdit },
+          payload: { modalType: ModalType.EDIT_TODO, modalData: {todo: todoToEdit, updateTodo: handleSave} },
         });
       }
     },
     [todos, dispatch]
   );
+
+
 
   const filteredTodos = useCallback(() => {
     if (todoState === "active") return todos.filter((todo) => !todo.completed);

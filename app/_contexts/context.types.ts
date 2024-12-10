@@ -14,7 +14,7 @@ export enum ModalType {
   type Payloads = {
     [Types.SHOW_MODAL]: {
       modalType: ModalType;
-      modalData?: ITodo;
+      modalData?: TodoModalContextType;
     };
     [Types.HIDE_MODAL]: undefined;
   };
@@ -29,9 +29,14 @@ export enum ModalType {
   // Action Type Definition
   export type ActionType = ActionMap<Payloads>[keyof ActionMap<Payloads>];
   
+  export type TodoModalContextType = {
+    todo: ITodo;
+    updateTodo?: (todos: ITodo) => void;
+  };
+
   // State Type Definition
   export type StateType = {
     modalType?: ModalType;
-    modalData?: ITodo;
+    modalData?: TodoModalContextType;
   };
   

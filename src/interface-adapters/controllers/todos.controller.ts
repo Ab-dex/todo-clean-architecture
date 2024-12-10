@@ -1,7 +1,5 @@
 import { getInjection } from "@/di/container";
-import { DI_SYMBOLS } from "@/di/types";
 import { insertTodoSchema, TodoInsertValidation } from "@/src/application/dto/todo.validations";
-import { ITodosUseCase } from "@/src/application/use-case/todos.usecase";
 import { InputParseError } from "@/src/domain/errors/common";
 import { ITodo, Todo } from "@/src/domain/models/todos";
 

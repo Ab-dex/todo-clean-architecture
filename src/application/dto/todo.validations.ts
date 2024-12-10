@@ -1,4 +1,3 @@
-import { Todo } from '@/src/domain/models/todos';
 import { z } from 'zod';
 
 export const selectTodoSchema = z.object({

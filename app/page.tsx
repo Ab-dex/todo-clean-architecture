@@ -4,7 +4,6 @@ import bgDesktopDark from "@/assets/images/bg-desktop-dark.jpg";
 import bgMobiledark from "@/assets/images/bg-mobile-dark.jpg";
 import AnimateBackgroundImage from "./_components/BackroundImage";
 import Image from "next/image";
-import UserMenu from "./_components/UserMenu";
 
 
 export default async function Home() {

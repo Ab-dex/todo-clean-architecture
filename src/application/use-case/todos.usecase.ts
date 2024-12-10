@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify'
+import { inject } from 'inversify'
 import { ITodo } from "@/src/domain/models/todos";
 import { ITodosRepository } from "@/src/domain/repositories/todos-repository.interface";
 import { DI_SYMBOLS } from '@/di/types';

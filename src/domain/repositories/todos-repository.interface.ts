@@ -1,4 +1,3 @@
-import { TodoInsertValidation } from "@/src/application/dto/todo.validations";
 import { ITodo } from "../models/todos";
 import { Transaction } from "@/drizzle";
 

@@ -4,6 +4,8 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { StyledRoot } from './StyledRoot';
 import { Box, Typography } from '@mui/material';
+import ModalRootContainer from './_components/modals';
+import AppContextProvider from './_contexts/AppContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,17 +22,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <AppRouterCacheProvider>
-      <StyledRoot>
-        {/* header */}
-        <Box bgcolor="black" color="white" sx={{paddingY: ["1rem", "1.5rem"]}}>
-          <Typography variant='h5' fontWeight={700} textAlign={'center'}>
-          Todo App
-          </Typography>
-          </Box>
-        {children}
-        </StyledRoot>
-        </AppRouterCacheProvider>
+        <AppContextProvider>
+          <AppRouterCacheProvider>
+          <StyledRoot>
+          {/* header */}
+          <Box bgcolor="black" color="white" sx={{paddingY: ["1rem", "1.5rem"]}}>
+            <Typography variant='h5' fontWeight={700} textAlign={'center'}>
+            Todo App
+            </Typography>
+            </Box>
+          {children}
+          <ModalRootContainer />
+          </StyledRoot>
+          </AppRouterCacheProvider>
+        </AppContextProvider>
       </body>
     </html>
   )

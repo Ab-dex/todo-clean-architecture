@@ -3,20 +3,16 @@ import CheckBox from "./CheckBox";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { cn } from "@/src/utils/cn";
-import { TodoType } from "../Todos";
+import { ITodo } from "@/src/domain/models/todos";
 
 type Props = {
-  setTextValue: React.Dispatch<SetStateAction<string>>;
-  d: TodoType;
-  editModeId: number | null;
+  activeTodo: ITodo;
   className?: string;
   text: string;
   isCompleted: boolean;
-  deleteTodo: (id: number) => void;
-  handleIsTodoCompleted: (todo: TodoType) => void;
-  textValue: string;
-  saveEditTodo: () => void;
-  editTodo: (id: number) => void;
+  deleteTodo: (id: string) => void;
+  handleIsTodoCompleted: (todo: ITodo) => void;
+  editTodo: (id: string) => void;
 };
 
 export default function SingleTodo({
@@ -25,12 +21,8 @@ export default function SingleTodo({
   isCompleted,
   deleteTodo,
   handleIsTodoCompleted,
-  d,
-  setTextValue,
-  textValue,
-  saveEditTodo,
+  activeTodo,
   editTodo,
-  editModeId
 }: Props) {
   return (
     <div
@@ -40,29 +32,10 @@ export default function SingleTodo({
         className
       )}
     >
-      <button onClick={() => handleIsTodoCompleted(d)}>
+      <button onClick={() => handleIsTodoCompleted(activeTodo)}>
         <CheckBox isCompleted={isCompleted} />
       </button>
       <div className="flex w-full h-full justify-between items-center">
-        {/*  */}
-
-        {editModeId === d.id ? (
-          <>
-            <input
-              value={textValue}
-              onChange={(e) => setTextValue(e.target.value)}
-              type="text"
-              className=" bg-inherit outline-none w-full h-full px-4"
-            />
-            <button
-              onClick={saveEditTodo}
-              className="bg-green-400 text-white rounded-md px-4 py-2"
-            >
-              Save
-            </button>
-          </>
-        ) : (
-          <>
             <p
               className={cn("    text-gray-600 ", {
                 "line-through": isCompleted
@@ -73,16 +46,14 @@ export default function SingleTodo({
 
             <div className=" flex gap-2 items-center text-xl ">
               <MdEdit
-                onClick={() => editTodo(d.id)}
+                onClick={() => editTodo(activeTodo?.id!)}
                 className="cursor-pointer dark:text-white"
               />
               <MdDelete
-                onClick={() => deleteTodo(d.id)}
+                onClick={() => deleteTodo(activeTodo?.id!)}
                 className="cursor-pointer text-red-500"
               />
             </div>
-          </>
-        )}
       </div>
     </div>
   );

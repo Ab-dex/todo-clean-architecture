@@ -1,28 +1,25 @@
-import { ContainerModule, interfaces } from 'inversify'
-
+import { ContainerModule, interfaces } from 'inversify';
 import { DI_SYMBOLS } from '@/di/types';
 import { ITodosRepository } from '@/src/domain/repositories/todos-repository.interface';
 import { TodosRepository } from '@/src/infrastructure/repositoryImpl/todos.repository';
 import { ITodosUseCase, TodosUseCase } from '@/src/application/use-case/todos.usecase';
-import { getTodosController } from '@/src/interface-adapters/controllers/todos.controller';
+import { createTodosController, deleteTodoController, getTodosController, updateTodoController } from '@/src/interface-adapters/controllers/todos.controller';
 
 const initializeModule = (bind: interfaces.Bind) => {
-   
-      bind<ITodosRepository>(DI_SYMBOLS.ITodosRepository).to(
-        TodosRepository
-      )
+  // Bind repository to its interface
+  bind<ITodosRepository>(DI_SYMBOLS.ITodosRepository).to(TodosRepository);
 
-      bind<ITodosUseCase>(DI_SYMBOLS.ITodosUseCase).to(
-        TodosUseCase
-      )
+  // Bind use case to its interface
+  bind<ITodosUseCase>(DI_SYMBOLS.ITodosUseCase).to(TodosUseCase);
 
-      bind(DI_SYMBOLS.IGetTodosController).toDynamicValue(() => getTodosController)
-
-    //   bind(DI_SYMBOLS.IGetTodosController).toDynamicValue(() => {
-    //     const todosUseCase = getInjection<ITodosUseCase>(DI_SYMBOLS.ITodosUseCase);
-    //     return getTodosController(todosUseCase); // Pass the use case to the controller
-    //   });
-    
-  }
+  // Bind controllers to dynamic values
+  bind(DI_SYMBOLS.IGetTodosController).toDynamicValue(() => getTodosController);
+  bind(DI_SYMBOLS.ICreateTodoController).toDynamicValue(() => createTodosController);
   
-  export const TodosModule = new ContainerModule(initializeModule)
+  // Bind update and delete controllers to dynamic values
+  bind(DI_SYMBOLS.IUpdateTodoController).toDynamicValue(() => updateTodoController);
+  bind(DI_SYMBOLS.IDeleteTodoController).toDynamicValue(() => deleteTodoController);
+};
+
+
+export const TodosModule = new ContainerModule(initializeModule);

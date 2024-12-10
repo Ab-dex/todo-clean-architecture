@@ -6,8 +6,10 @@ import { Box, Stack } from "@mui/material";
 import InputBox from "./_components/InputBox";
 import SingleTodo from "./_components/SingleTodo";
 import { cn } from "@/src/utils/cn";
-import { Todo } from "@/src/domain/models/todos";
-import { getTodos } from "./_actions/todoAction";
+import { ITodo } from "@/src/domain/models/todos";
+import { createTodos, getTodos, removeMultipleTodos, removeTodo, updateTodo } from "./_actions/todoAction";
+import { useAppContext } from "./_contexts/AppContext";
+import { ModalType, Types } from "./_contexts/context.types";
 
 export type TodoType = {
   id: number;
@@ -22,81 +24,83 @@ const sampleTodos: TodoType[] = [
 ];
 
 export default function Todos() {
-  const [todos, setTodos] = useState<TodoType[]>([]);
+  const { dispatch } = useAppContext();
+  const [todos, setTodos] = useState<ITodo[]>([]);
   const [inputText, setInputText] = useState("");
   const [isTodoCompleted, setTodoCompleted] = useState(false);
-  const [editModeId, setEditModeId] = useState<number | null>(null);
-  const [textValue, setTextValue] = useState("");
   const [todoState, setTodoState] = useState<"all" | "active" | "completed">(
     "all"
   );
   const [animationParent] = useAutoAnimate();
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (inputText.trim() !== "") {
-      const isExistingTodo = todos.some((todo) => todo.text === inputText);
-      if (isExistingTodo) {
-        alert("This todo already exists");
-        setInputText("");
-        setTodoCompleted(false);
-        return;
-      }
-      setTodos([
-        ...todos,
-        // no need declaring variable for this
-        { id: todos.length + 1, text: inputText, isCompleted: isTodoCompleted },
-      ]);
+  
+    if (inputText.trim() === "") {
+      alert("Todo cannot be empty.");
+      return;
+    }
+  
+    // Check for duplicate todos
+    const isExistingTodo = todos.some((todo) => todo.todo === inputText);
+    if (isExistingTodo) {
+      alert("This todo already exists");
       setInputText("");
+      setTodoCompleted(false);
+      return;
+    }
+  
+    try {
+      // Create a new todo using the server action
+      await createTodos({ todo: inputText, completed: isTodoCompleted });
+  
+      // Refetch todos to get the updated list
+      const updatedTodos = fetchTodo();
+  
+      // Reset the input field and state
+      setInputText("");
+    } catch (err: unknown) {
+      alert("Failed to create todo: " + err);
     }
   }
+  
 
-  function deleteTodo(id: number) {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  async function deleteTodo(id: string) {
+    await removeTodo(id)
+    fetchTodo()
   }
 
-  function editTodo(id: number) {
-    setEditModeId(id);
+  function editTodo(id: string) {
 
     const todoToEdit = todos.find((todo) => todo.id == id);
     if (todoToEdit) {
-      setTextValue(todoToEdit.text);
+      dispatch({
+        type: Types.SHOW_MODAL,
+        payload: { modalType: ModalType.EDIT_TODO, modalData: todoToEdit },
+      });
     }
   }
 
-  function saveEditTodo() {
-    const updatedTodos = todos.map((todo) =>
-      todo.id === editModeId ? { ...todo, text: textValue } : todo
-    );
-    setTodos(updatedTodos);
-    setEditModeId(null);
+  async function handleIsTodoCompleted(todo: ITodo) {
+    const {id, completed} = todo
+    await updateTodo(id, {completed: !completed})
+    fetchTodo()
   }
 
-  function handleIsTodoCompleted(todo: TodoType) {
-    const updatedTodos: TodoType[] = todos.map((d) => {
-      if (todo == d) {
-        return { ...d, isCompleted: !d.isCompleted };
-      }
-      return d;
-    });
-
-    setTodos(updatedTodos);
+  async function clearCompleteTodos() {
+    const completed = todos.filter(todo => !!todo.completed)?.map(todo => todo.id)
+    await removeMultipleTodos(completed)
+    fetchTodo()
   }
 
-  function clearCompleteTodos() {
-    const updatedTodos = todos.filter((todo) => !todo.isCompleted);
-
-    setTodos(updatedTodos);
-  }
-
-  const completedTodos = todos.filter((d) => d.isCompleted);
-  const activeTodos = todos.filter((d) => !d.isCompleted);
+  const completedTodos = todos.filter((d) => d.completed);
+  const activeTodos = todos.filter((d) => !d.completed);
 
   const fetchTodo = async () => {
-    let todos: Todo[];
+    let todos: ITodo[];
     try {
       todos = await getTodos();
-      console.log(todos)
+      setTodos(todos?.sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1)));
     } catch (err) {
       throw err;
     }
@@ -128,48 +132,36 @@ export default function Todos() {
           todos.map((todo, index) => (
             <SingleTodo
                   key={index}
-                  setTextValue={setTextValue}
-                  editModeId={editModeId}
-                  textValue={textValue}
-                  saveEditTodo={saveEditTodo}
                   editTodo={editTodo}
-                  d={todo}
-                  handleIsTodoCompleted={() => handleIsTodoCompleted(todo)}
-                  deleteTodo={() => deleteTodo(todo.id)}
-                  isCompleted={todo.isCompleted}
-                  text={todo.text}
+                  activeTodo={todo}
+                  handleIsTodoCompleted={handleIsTodoCompleted}
+                  deleteTodo={(id) => deleteTodo(id)}
+                  isCompleted={todo.completed}
+                  text={todo.todo}
                 />
           ))}
         {todoState === "active" &&
-          activeTodos.map((todo, index) => (
+          activeTodos.map((todo: ITodo, index) => (
             <SingleTodo
                   key={index}
-                  setTextValue={setTextValue}
-                  editModeId={editModeId}
-                  textValue={textValue}
-                  saveEditTodo={saveEditTodo}
                   editTodo={editTodo}
-                  d={todo}
-                  handleIsTodoCompleted={() => handleIsTodoCompleted(todo)}
-                  deleteTodo={() => deleteTodo(todo.id)}
-                  isCompleted={todo.isCompleted}
-                  text={todo.text}
+                  activeTodo={todo}
+                  handleIsTodoCompleted={handleIsTodoCompleted}
+                  deleteTodo={deleteTodo}
+                  isCompleted={todo.completed}
+                  text={todo.todo}
                 />
           ))}
         {todoState === "completed" &&
           completedTodos.map((todo, index) => (
             <SingleTodo
                   key={index}
-                  setTextValue={setTextValue}
-                  editModeId={editModeId}
-                  textValue={textValue}
-                  saveEditTodo={saveEditTodo}
                   editTodo={editTodo}
-                  d={todo}
-                  handleIsTodoCompleted={() => handleIsTodoCompleted(todo)}
-                  deleteTodo={() => deleteTodo(todo.id)}
-                  isCompleted={todo.isCompleted}
-                  text={todo.text}
+                  activeTodo={todo}
+                  handleIsTodoCompleted={handleIsTodoCompleted}
+                  deleteTodo={deleteTodo}
+                  isCompleted={todo.completed}
+                  text={todo.todo}
                 />
           ))}
           {/*  filter  */}

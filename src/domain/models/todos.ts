@@ -11,9 +11,10 @@ export class Todo implements ITodo {
     public id: string;
     public completed: boolean;
     
-    constructor(public todo: string, completed: number, public dueDate?: string) {
+    constructor(public todo: string, completed: number, public dueDate?: string | null) {
         this.id = generateId();
         this.completed = Boolean(completed)
+        this.dueDate = dueDate ?? null
     }
 
 

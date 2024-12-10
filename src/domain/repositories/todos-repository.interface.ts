@@ -3,10 +3,10 @@ import { ITodo } from "../models/todos";
 
 export interface ITodosRepository {
     // since repository is for interaction with infrastructure, then the input has to be of the domain model type. DTOs are meant for transition between outside world to controller.
-    // createTodo(todo: Todo, tx?: any): Promise<Todo>;
+    createTodo(todo: ITodo, tx?: any): Promise<ITodo>;
     // getTodo(id: number): Promise<Todo | undefined>;
     // getTodosForUser(userId: string): Promise<Todo[]>;
     getTodos(): Promise<ITodo[]>;
-    // updateTodo(id: number, input: Partial<Todo>, tx?: any): Promise<Todo>;
-    // deleteTodo(id: number, tx?: any): Promise<void>;
+    updateTodo(id: string, updatedData: Partial<ITodo>, tx?: any): Promise<ITodo>;
+    deleteTodo(id: string, tx?: any): Promise<void>;
 }

@@ -25,9 +25,16 @@ Here’s an overview of the file structure:
   /pages          # Next.js page components
   /utils          # Utility functions and helpers
 /public           # Static assets (images, fonts, etc.)
+/asests           # App assets (images)
+/di               # Dependency injecttion container aand associated bindings
+/drizzle          # All drizzle configurations and types
+  /migrations     # All database migrations created
 /src
-  /lib            # Infrastructure (db setup, api calls, etc.)
-  /migrations     # Database migration files
+  /utils          # Utility functions
+  /application    # Application layer of the onion architecture containing use cases and its interfaces
+  /domain           # All domain entities including models, dtos and repository interfaces for contract with daatabase
+  /infraastructure  # Infrastructure layer including the concrete implementation of domain repositories. 
+  /interface-adaapters # Here lies the controllers
 ```
 
 The project follows a modular structure, allowing easy modifications and extensions as per the Onion Architecture. Each layer has a clear responsibility, minimizing dependencies and making testing easier.
